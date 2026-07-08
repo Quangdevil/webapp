@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuangDurenOnline_V20_27_split_vercel_fix8</title>
+  <link rel="stylesheet" href="./style.css">
+  <script data-cfasync="false" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div>
+      <h1>QuangDurenOnline_V20.27 clean notes · Clean nhập liệu</h1>
+      <div class="sub">V20.17 · Mobile drawer kiểu ChatGPT · menu ẩn chứa lọc lô nhanh</div>
+    </div>
+    <div class="login-pill" id="qdConnStatus"><span class="dot"></span> Supabase: đang kiểm tra</div>
+  </div>
+  <div class="tabs" id="tabs"></div>
+  <section id="overview" class="tabpane active"></section>
+  <section id="quick" class="tabpane"></section>
+  <section id="lots" class="tabpane"></section>
+  <section id="money" class="tabpane"></section>
+  <section id="balance" class="tabpane"></section>
+  <section id="debts" class="tabpane"></section>
+  <section id="lot_recon" class="tabpane"></section>
+  <section id="flows" class="tabpane"></section>
+  <section id="settings" class="tabpane"></section>
+</div>
+
+<div id="mobileShell" class="qd-mobile-shell" aria-label="QuangDuren mobile"></div>
+
+<div id="lotModalMask" class="modal-mask" onclick="if(event.target.id==='lotModalMask')closeLotSummary()">
+  <div class="modal" id="lotModal"></div>
+</div>
+<div id="statusPop" class="status-pop"></div>
+  <script src="./app.js"></script>
+</body>
+</html>
