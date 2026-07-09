@@ -1,0 +1,78 @@
+name: Auto unzip web update
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "web-update.zip"
+      - ".github/workflows/auto-unzip-web.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  update-web-files:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Unzip and overwrite 3 web files
+        shell: bash
+        run: |
+          set -e
+
+          ZIP_FILE="web-update.zip"
+
+          # Sửa 3 dòng này đúng tên file thật trong repo của anh
+          HTML_FILE="index.html"
+          CSS_FILE="style.css"
+          JS_FILE="script.js"
+
+          if [ ! -f "$ZIP_FILE" ]; then
+            echo "Không thấy file $ZIP_FILE"
+            exit 1
+          fi
+
+          rm -rf /tmp/web-update
+          mkdir -p /tmp/web-update
+          unzip -o "$ZIP_FILE" -d /tmp/web-update
+
+          copy_file () {
+            TARGET="$1"
+            BASENAME=$(basename "$TARGET")
+            FOUND=$(find /tmp/web-update -type f -name "$BASENAME" | head -n 1)
+
+            if [ -z "$FOUND" ]; then
+              echo "Thiếu file $BASENAME trong zip"
+              exit 1
+            fi
+
+            mkdir -p "$(dirname "$TARGET")"
+            cp -f "$FOUND" "$TARGET"
+            echo "Đã ghi đè $TARGET"
+          }
+
+          copy_file "$HTML_FILE"
+          copy_file "$CSS_FILE"
+          copy_file "$JS_FILE"
+
+          rm -f "$ZIP_FILE"
+
+      - name: Commit updated files
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add .
+          if git diff --cached --quiet; then
+            echo "Không có thay đổi mới"
+            exit 0
+          fi
+
+          git commit -m "Auto update html css js from zip"
+          git push
